@@ -50,10 +50,12 @@ subidos = st.sidebar.file_uploader("📂 Cargar datos (ventas, clientes, product
                                    help="El nombre del archivo debe contener 'ventas', 'clientes' o 'productos'. "
                                         "Los archivos cargados reemplazan a los de la carpeta data/.")
 archivos = {}
-for p in sorted(DATA_DIR.glob("*")) if DATA_DIR.exists() else []:
-    rol = dl.rol_por_nombre(p.name)
-    if rol and p.suffix.lower() in (".csv", ".xlsx"):
-        archivos[rol] = (p.name, p.read_bytes())
+# Busca archivos de datos en la carpeta data/ y también junto a app.py (raíz del proyecto)
+for carpeta in (Path(__file__).parent, DATA_DIR):
+    for p in sorted(carpeta.glob("*")) if carpeta.exists() else []:
+        rol = dl.rol_por_nombre(p.name)
+        if rol and p.suffix.lower() in (".csv", ".xlsx"):
+            archivos[rol] = (p.name, p.read_bytes())
 for f in subidos or []:
     rol = dl.rol_por_nombre(f.name)
     if rol:
